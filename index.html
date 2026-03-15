@@ -120,8 +120,12 @@ body {
 .weather-desc { font-size: 12px; font-weight: 700; color: var(--text3); margin-top: 1px; }
 
 /* 4-HOUR SUMMARY (Always visible) */
-.weather-4h { display: flex; gap: 6px; margin-top: 12px; }
-.weather-4h .hourly-item { flex: 1; min-width: 0; }
+.weather-4h { display: flex; gap: 8px; margin-top: 16px; margin-bottom: 4px; }
+.weather-4h .hourly-item { flex: 1; min-width: 0; padding: 12px 4px; border-radius: 14px; }
+.weather-4h .hourly-time { font-size: 13px; margin-bottom: 6px; }
+.weather-4h .hourly-ico { font-size: 28px; margin-bottom: 6px; }
+.weather-4h .hourly-temp { font-size: 18px; font-weight: 900; color: var(--text); }
+.weather-4h .hourly-rain { font-size: 11px; margin-top: 4px; }
 
 /* HOURLY & DETAILS */
 .hourly-item {
