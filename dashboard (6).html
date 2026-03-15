@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0a0f;
+  --bg2: rgba(255,255,255,0.05);
+  --border: rgba(255,255,255,0.09);
+  --text: #f0ece0;
+  --text2: #a09488;
+  --text3: #5a5047;
+  --accent: rgba(120,80,200,0.5);
+  --accent-bg: rgba(120,80,200,0.15);
+  --accent-border: rgba(120,80,200,0.35);
+  --glow: rgba(120,80,200,0.12);
+  --toggle-ico: "☀️";
+}
+[data-theme="light"] {
+  --bg: #f4f1eb;
+  --bg2: rgba(0,0,0,0.05);
+  --border: rgba(0,0,0,0.1);
+  --text: #1a1714;
+  --text2: #5a5047;
+  --text3: #a09488;
+  --accent: rgba(90,50,170,0.5);
+  --accent-bg: rgba(90,50,170,0.1);
+  --accent-border: rgba(90,50,170,0.3);
+  --glow: rgba(90,50,170,0.08);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  min-height: 100vh;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+.bg-glow {
+  position: fixed; top: -200px; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, var(--glow) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+
+/* THEME TOGGLE */
+.theme-btn {
+  position: fixed; top: 14px; right: 14px; z-index: 100;
+  background: var(--bg2); border: 0.5px solid var(--border);
+  border-radius: 50%; width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 16px;
+  transition: background 0.2s;
+}
+
+/* PORTRAIT LAYOUT */
+.page {
+  position: relative; z-index: 1;
+  padding: 16px 14px 28px;
+  width: 100%;
+}
+.col-left, .col-right { width: 100%; }
+
+/* LANDSCAPE LAYOUT — grid, boyutlar viewport'a göre */
+@media (orientation: landscape) {
+  body { overflow-y: auto; }
+  .page {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 14px;
+    padding: 10px 14px 14px;
+    align-items: start;
+  }
+  .col-left { grid-column: 1; }
+  .col-right { grid-column: 2; }
+  .clock-section { margin-bottom: 10px; }
+  .card { margin-bottom: 10px; padding: 12px 14px; }
+  .time { font-size: clamp(32px, 8vw, 56px) !important; }
+  .weather-temp { font-size: clamp(24px, 5vw, 36px) !important; }
+  .weather-icon { font-size: clamp(28px, 5vw, 38px) !important; }
+  .date-line { font-size: clamp(9px, 1.5vw, 12px); }
+  .section-label { font-size: clamp(8px, 1.2vw, 10px); }
+  .forecast-day { font-size: clamp(11px, 1.5vw, 13px); }
+  .hourly-temp { font-size: clamp(11px, 1.5vw, 13px); }
+  .hourly-time { font-size: clamp(9px, 1.2vw, 11px); }
+  .hourly-ico { font-size: clamp(14px, 2.5vw, 20px) !important; }
+  .notes-area { font-size: clamp(12px, 1.8vw, 14px); min-height: 60px; }
+}
+
+/* CLOCK */
+.clock-section {
+  text-align: center; margin-bottom: 18px; padding-top: 2px;
+  position: relative;
+}
+.time {
+  font-size: clamp(52px, 20vw, 80px);
+  font-weight: 900; letter-spacing: -2px; color: var(--text); line-height: 1;
+}
+.colon { animation: blink 1s step-end infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+.date-line {
+  font-size: 12px; font-weight: 700; color: var(--text3);
+  letter-spacing: 1.5px; text-transform: uppercase; margin-top: 6px;
+}
+
+/* CARDS */
+.card {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 16px; padding: 14px 16px; margin-bottom: 12px;
+  transition: background 0.3s, border 0.3s;
+}
+.section-label {
+  font-size: 10px; font-weight: 800; letter-spacing: 2.5px;
+  text-transform: uppercase; color: var(--text3); margin-bottom: 10px;
+}
+
+/* WEATHER NOW */
+.weather-now { display: flex; align-items: center; gap: 14px; }
+.weather-icon { font-size: clamp(36px, 11vw, 48px); line-height: 1; flex-shrink: 0; }
+.weather-main { flex: 1; min-width: 0; }
+.weather-temp {
+  font-size: clamp(30px, 10vw, 42px);
+  font-weight: 900; color: var(--text); line-height: 1;
+}
+.weather-city { font-size: 13px; font-weight: 700; color: var(--text2); margin-top: 3px; }
+.weather-desc { font-size: 12px; font-weight: 700; color: var(--text3); margin-top: 2px; }
+.weather-meta { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.weather-meta span { font-size: 11px; font-weight: 700; color: var(--text3); }
+.weather-meta span strong { color: var(--text2); font-weight: 800; }
+
+/* HOURLY */
+.hourly-scroll {
+  overflow-x: auto; overflow-y: hidden; display: flex; gap: 8px;
+  padding: 2px 0 6px; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
+.hourly-scroll::-webkit-scrollbar { display: none; }
+.hourly-item {
+  flex-shrink: 0; background: var(--bg2);
+  border: 0.5px solid var(--border); border-radius: 12px;
+  padding: 8px 10px; text-align: center; min-width: 54px; scroll-snap-align: start;
+}
+.hourly-item.now {
+  background: var(--accent-bg); border-color: var(--accent-border);
+}
+.hourly-time { font-size: 11px; font-weight: 700; color: var(--text3); margin-bottom: 4px; }
+.hourly-ico { font-size: 20px; line-height: 1; margin-bottom: 4px; }
+.hourly-temp { font-size: 13px; font-weight: 800; color: var(--text2); }
+.hourly-rain { font-size: 10px; font-weight: 700; color: #4a6070; margin-top: 2px; min-height: 13px; }
+
+/* FORECAST */
+.forecast-list { display: flex; flex-direction: column; gap: 8px; }
+.forecast-item { display: flex; align-items: center; gap: 8px; }
+.forecast-day { font-size: 13px; font-weight: 800; color: var(--text2); width: 70px; flex-shrink: 0; }
+.forecast-ico { font-size: 18px; flex-shrink: 0; }
+.forecast-bar {
+  flex: 1; height: 4px; background: var(--border);
+  border-radius: 2px; position: relative; overflow: hidden;
+}
+.forecast-bar-fill {
+  position: absolute; top: 0; height: 100%;
+  background: var(--accent); border-radius: 2px;
+}
+.forecast-temps { display: flex; gap: 6px; font-size: 12px; flex-shrink: 0; width: 68px; justify-content: flex-end; }
+.forecast-max { color: var(--text); font-weight: 800; }
+.forecast-min { color: var(--text3); font-weight: 700; }
+
+/* NAMAZ */
+.namaz-section { margin-bottom: 12px; }
+.nv-widget-wrapper {
+  background: var(--bg2); border: 0.5px solid var(--border);
+  border-radius: 16px; overflow: hidden; width: 100%;
+  transition: background 0.3s, border 0.3s;
+}
+.nv-widget-wrapper > div,
+.nv-widget-wrapper iframe,
+.nv-widget-wrapper .nv-widget { width: 100% !important; max-width: 100% !important; }
+
+/* NOTES */
+.notes-area {
+  width: 100%; background: transparent; border: none; outline: none;
+  color: var(--text); font-family: 'Nunito', sans-serif;
+  font-size: 14px; font-weight: 700; line-height: 1.7;
+  resize: none; min-height: 80px; caret-color: var(--text2);
+}
+.notes-area::placeholder { color: var(--text3); }
+.notes-saved {
+  font-size: 10px; font-weight: 700; color: transparent; text-align: right;
+  margin-top: 4px; letter-spacing: 1px;
+  transition: color 0.3s; min-height: 14px;
+}
+.notes-saved.show { color: var(--text3); }
+
+.loading { font-size: 13px; font-weight: 700; color: var(--text3); }
+</style>
+</head>
+<body>
+<div class="bg-glow"></div>
+
+<button class="theme-btn" id="theme-btn" onclick="toggleTheme()">🌙</button>
+
+<div class="page">
+  <div class="col-left">
+    <div class="clock-section">
+      <div class="time" id="clock">00<span class="colon">:</span>00</div>
+      <div class="date-line" id="datestr">—</div>
+    </div>
+
+    <div class="card" id="weather-now-card">
+      <div class="loading">konum bekleniyor…</div>
+    </div>
+
+    <div class="card" id="hourly-card" style="display:none;">
+      <div class="section-label">Saatlik Tahmin</div>
+      <div class="hourly-scroll" id="hourly-scroll"></div>
+    </div>
+
+    <div class="card" id="forecast-card" style="display:none;">
+      <div class="section-label">5 Günlük Tahmin</div>
+      <div class="forecast-list" id="forecast-list"></div>
+    </div>
+  </div>
+
+  <div class="col-right">
+    <div class="namaz-section">
+      <div class="section-label">Namaz Vakitleri</div>
+      <div class="nv-widget-wrapper">
+        <div class="nv-widget" data-lang="tr" data-search="disabled" data-cityId="1183" data-countdown="true" data-prayerTimes="row" data-width="370" style="width:100%;"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-label">Notlar</div>
+      <textarea class="notes-area" id="notes" placeholder="bir şeyler yaz…" rows="4"></textarea>
+      <div class="notes-saved" id="notes-saved">kaydedildi</div>
+    </div>
+  </div>
+</div>
+
+<script async defer crossorigin="anonymous" src="https://namazvakitleri.com.tr/widget.js"></script>
+<script>
+const DAYS = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+const DAYS_SHORT = ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+const MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  document.getElementById('clock').innerHTML = h + '<span class="colon">:</span>' + m;
+  document.getElementById('datestr').textContent =
+    DAYS[now.getDay()] + ', ' + now.getDate() + ' ' + MONTHS[now.getMonth()] + ' ' + now.getFullYear();
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = isDark ? '🌙' : '☀️';
+  localStorage.setItem('dashboard-theme', isDark ? 'light' : 'dark');
+}
+const savedTheme = localStorage.getItem('dashboard-theme');
+if (savedTheme) {
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  document.getElementById('theme-btn').textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+}
+
+const WI = {
+  0:['☀️','Açık'], 1:['🌤️','Az Bulutlu'], 2:['⛅','Parçalı Bulutlu'], 3:['☁️','Kapalı'],
+  45:['🌫️','Sisli'], 48:['🌫️','Donlu Sis'],
+  51:['🌦️','Hafif Çisenti'], 53:['🌦️','Çisenti'], 55:['🌧️','Yoğun Çisenti'],
+  61:['🌧️','Hafif Yağmur'], 63:['🌧️','Yağmurlu'], 65:['🌧️','Şiddetli Yağmur'],
+  71:['🌨️','Hafif Kar'], 73:['❄️','Karlı'], 75:['❄️','Yoğun Kar'],
+  80:['🌦️','Sağanak'], 81:['🌧️','Sağanak'], 82:['⛈️','Şiddetli Sağanak'],
+  95:['⛈️','Fırtınalı'], 96:['⛈️','Dolu Fırtına'], 99:['⛈️','Şiddetli Dolu'],
+};
+function wi(code) { return WI[code] || ['🌡️','Bilinmiyor']; }
+
+async function getCity(lat, lon) {
+  try {
+    const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=tr`);
+    const d = await r.json();
+    return d.address.city || d.address.town || d.address.village || d.address.county || '';
+  } catch { return ''; }
+}
+
+async function fetchWeather(lat, lon) {
+  const res = await fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+    `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weathercode` +
+    `&hourly=temperature_2m,weathercode,precipitation_probability` +
+    `&daily=weathercode,temperature_2m_max,temperature_2m_min` +
+    `&timezone=auto&forecast_days=6`
+  );
+  return res.json();
+}
+
+function renderNow(data, city) {
+  const c = data.current;
+  const [icon, desc] = wi(c.weathercode);
+  document.getElementById('weather-now-card').innerHTML = `
+    <div class="weather-now">
+      <div class="weather-icon">${icon}</div>
+      <div class="weather-main">
+        <div class="weather-temp">${Math.round(c.temperature_2m)}°</div>
+        ${city ? `<div class="weather-city">${city}</div>` : ''}
+        <div class="weather-desc">${desc}</div>
+        <div class="weather-meta">
+          <span>Nem <strong>${c.relative_humidity_2m}%</strong></span>
+          <span>Rüzgar <strong>${Math.round(c.wind_speed_10m)} km/s</strong></span>
+        </div>
+      </div>
+    </div>`;
+}
+
+function renderHourly(data) {
+  const now = new Date();
+  const { time: times, temperature_2m: temps, weathercode: codes, precipitation_probability: rains } = data.hourly;
+  let html = ''; let count = 0;
+  for (let i = 0; i < times.length && count < 24; i++) {
+    const t = new Date(times[i]);
+    const isNow = t.getHours() === now.getHours() && t.getDate() === now.getDate();
+    if (t < now && !isNow) continue;
+    const [ico] = wi(codes[i]);
+    const label = isNow ? 'şimdi' : String(t.getHours()).padStart(2,'0') + ':00';
+    html += `<div class="hourly-item${isNow?' now':''}">
+      <div class="hourly-time">${label}</div>
+      <div class="hourly-ico">${ico}</div>
+      <div class="hourly-temp">${Math.round(temps[i])}°</div>
+      <div class="hourly-rain">${rains[i] > 0 ? '%'+rains[i] : ''}</div>
+    </div>`;
+    count++;
+  }
+  document.getElementById('hourly-scroll').innerHTML = html;
+  document.getElementById('hourly-card').style.display = '';
+}
+
+function renderForecast(data) {
+  const { time, weathercode, temperature_2m_max: maxT, temperature_2m_min: minT } = data.daily;
+  const absMax = Math.max(...maxT), absMin = Math.min(...minT);
+  const range = absMax - absMin || 1;
+  let html = '';
+  for (let i = 1; i < 6; i++) {
+    const d = new Date(time[i]);
+    const [ico] = wi(weathercode[i]);
+    const max = Math.round(maxT[i]), min = Math.round(minT[i]);
+    const left = ((minT[i] - absMin) / range * 100).toFixed(1);
+    const width = ((maxT[i] - minT[i]) / range * 100).toFixed(1);
+    html += `<div class="forecast-item">
+      <div class="forecast-day">${i===1?'Yarın':DAYS_SHORT[d.getDay()]}</div>
+      <div class="forecast-ico">${ico}</div>
+      <div class="forecast-bar"><div class="forecast-bar-fill" style="left:${left}%;width:${width}%"></div></div>
+      <div class="forecast-temps"><span class="forecast-min">${min}°</span><span class="forecast-max">${max}°</span></div>
+    </div>`;
+  }
+  document.getElementById('forecast-list').innerHTML = html;
+  document.getElementById('forecast-card').style.display = '';
+}
+
+function loadWeather() {
+  if (!navigator.geolocation) {
+    document.getElementById('weather-now-card').innerHTML = '<div class="loading">konum desteklenmiyor</div>';
+    return;
+  }
+  navigator.geolocation.getCurrentPosition(async pos => {
+    try {
+      const { latitude: lat, longitude: lon } = pos.coords;
+      const [data, city] = await Promise.all([fetchWeather(lat, lon), getCity(lat, lon)]);
+      renderNow(data, city);
+      renderHourly(data);
+      renderForecast(data);
+    } catch {
+      document.getElementById('weather-now-card').innerHTML = '<div class="loading">hava durumu alınamadı</div>';
+    }
+  }, () => {
+    document.getElementById('weather-now-card').innerHTML = '<div class="loading">konum izni verilmedi</div>';
+  });
+}
+loadWeather();
+setInterval(loadWeather, 15 * 60 * 1000);
+
+const notesEl = document.getElementById('notes');
+const savedEl = document.getElementById('notes-saved');
+notesEl.value = localStorage.getItem('dashboard-notes') || '';
+let saveTimer;
+notesEl.addEventListener('input', () => {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    localStorage.setItem('dashboard-notes', notesEl.value);
+    savedEl.classList.add('show');
+    setTimeout(() => savedEl.classList.remove('show'), 2000);
+  }, 800);
+});
+</script>
+</body>
+</html>
