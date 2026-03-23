@@ -2,240 +2,228 @@
 <html lang="tr" data-theme="dark">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
-<title>Ev Bilgi Ekranı</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #0a0a0f;
-  --bg2: rgba(255,255,255,0.05);
-  --border: rgba(255,255,255,0.09);
-  --text: #f0ece0;
-  --text2: #a09488;
-  --text3: #5a5047;
-  --accent: rgba(120,80,200,0.5);
-  --accent-bg: rgba(120,80,200,0.15);
-  --accent-border: rgba(120,80,200,0.35);
+:root{
+  --bg:#0a0a0f;--bg2:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.09);
+  --text:#f0ece0;--text2:#a09488;--text3:#5a5047;
+  --accent:rgba(120,80,200,0.5);--accent-bg:rgba(120,80,200,0.15);--accent-border:rgba(120,80,200,0.35);
 }
-[data-theme="light"] {
-  --bg: #f4f1eb;
-  --bg2: rgba(0,0,0,0.04);
-  --border: rgba(0,0,0,0.08);
-  --text: #1a1714;
-  --text2: #5a5047;
-  --text3: #a09488;
-  --accent: rgba(90,50,170,0.5);
-  --accent-bg: rgba(90,50,170,0.1);
-  --accent-border: rgba(90,50,170,0.3);
+[data-theme="light"]{
+  --bg:#f4f1eb;--bg2:rgba(0,0,0,0.05);--border:rgba(0,0,0,0.1);
+  --text:#1a1714;--text2:#5a5047;--text3:#a09488;
+  --accent:rgba(90,50,170,0.5);--accent-bg:rgba(90,50,170,0.1);--accent-border:rgba(90,50,170,0.3);
 }
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:100%;}
+body{background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;min-height:100vh;transition:background 0.3s,color 0.3s;}
 
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-html, body { width: 100%; height: 100%; overflow: hidden; } /* Prevents unwanted scrolling */
-body {
-  background: var(--bg); color: var(--text);
-  font-family: 'Nunito', sans-serif; font-weight: 700;
-  transition: background 0.4s ease, color 0.4s ease;
-  display: flex; flex-direction: column;
-}
+/* SETUP */
+.setup-overlay{position:fixed;inset:0;z-index:999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;gap:16px;}
+.setup-overlay.hidden{display:none;}
+.setup-title{font-size:22px;font-weight:900;}
+.setup-sub{font-size:13px;color:var(--text3);}
+.setup-input{width:100%;max-width:320px;padding:12px 16px;background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;outline:none;}
+.setup-input::placeholder{color:var(--text3);}
+.setup-results{width:100%;max-width:320px;display:flex;flex-direction:column;gap:8px;max-height:220px;overflow-y:auto;}
+.setup-ri{padding:12px 16px;background:var(--bg2);border:0.5px solid var(--border);border-radius:12px;cursor:pointer;font-size:14px;font-weight:700;color:var(--text2);}
+.setup-btn{padding:12px 24px;background:var(--accent-bg);border:0.5px solid var(--accent-border);border-radius:12px;color:var(--text);font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;}
 
-/* THEME BTN */
-.theme-btn {
-  position: absolute; top: 12px; right: 12px; z-index: 999;
-  background: var(--bg2); border: 0.5px solid var(--border);
-  border-radius: 50%; width: 34px; height: 34px;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; font-size: 15px; transition: background 0.2s;
-}
-.theme-btn:active { background: var(--border); }
+/* TOPBAR */
+.topbar{position:fixed;top:12px;right:12px;z-index:200;display:flex;gap:8px;}
+.tb{background:var(--bg2);border:0.5px solid var(--border);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:16px;user-select:none;-webkit-tap-highlight-color:transparent;}
+.tb.on{background:var(--accent-bg);border-color:var(--accent-border);}
 
-/* PAGE LAYOUT */
-.page { 
-  padding: 12px; width: 100%; height: 100%; 
-  display: flex; flex-direction: column; 
-  overflow-y: auto; scrollbar-width: none;
-}
-.page::-webkit-scrollbar { display: none; }
+/* PAGE */
+.page{display:flex;flex-wrap:wrap;align-items:flex-start;padding:14px 8px 100px;width:100%;}
 
-.col-left, .col-right { width: 100%; display: flex; flex-direction: column; gap: 10px; }
+/* WIDGET */
+.ww{padding:4px;transition:opacity 0.2s;}
+.ww[data-w="25"]{width:25%;}
+.ww[data-w="33"]{width:33.333%;}
+.ww[data-w="50"]{width:50%;}
+.ww[data-w="67"]{width:66.666%;}
+.ww[data-w="75"]{width:75%;}
+.ww[data-w="100"]{width:100%;}
+.ww.dim{opacity:0.28;}
 
-/* DYNAMIC LANDSCAPE GRID */
-@media (min-width: 600px) and (orientation: landscape) {
-  .page {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: 100%;
-    column-gap: 16px;
-    align-items: stretch;
-    padding: 16px;
-    overflow: hidden; /* Fully locked layout on landscape tablets */
-  }
-  .col-left, .col-right { height: 100%; overflow-y: auto; scrollbar-width: none; }
-  .col-left::-webkit-scrollbar, .col-right::-webkit-scrollbar { display: none; }
-}
+/* EDIT BAR */
+.ebar{display:none;background:var(--bg);border:0.5px solid var(--accent-border);border-radius:10px;padding:6px 8px;margin-bottom:6px;flex-wrap:wrap;gap:5px;align-items:center;}
+.editing .ebar{display:flex;}
+.elabel{font-size:9px;font-weight:900;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-right:2px;}
+.eb{background:var(--bg2);border:0.5px solid var(--border);border-radius:7px;padding:5px 10px;font-size:11px;font-weight:800;color:var(--text2);cursor:pointer;font-family:'Nunito',sans-serif;user-select:none;-webkit-tap-highlight-color:transparent;touch-action:manipulation;}
+.eb:active{background:var(--accent-bg);color:var(--text);}
+.eb.red{color:#d95555;}
+.eb.grn{color:#44aa55;}
+
+/* INNER */
+.wi{border-radius:14px;}
 
 /* CLOCK */
-.clock-section { text-align: center; padding: 5px 0 10px; flex-shrink: 0; }
-.time {
-  font-size: clamp(48px, 12vh, 80px); /* Height-based scaling to save vertical space */
-  font-weight: 900; letter-spacing: -2px; color: var(--text); line-height: 0.9;
-}
-.colon { animation: blink 1s step-end infinite; }
-@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
-.date-line {
-  font-size: clamp(11px, 2.5vh, 14px); font-weight: 700; color: var(--text3);
-  letter-spacing: 1.5px; text-transform: uppercase; margin-top: 4px;
-}
+.clock-inner{text-align:center;padding:10px 4px 6px;}
+#clock{font-weight:900;letter-spacing:-1px;color:var(--text);line-height:1;transition:font-size 0.15s;}
+.colon{animation:blink 1s step-end infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.15}}
+.date-line{font-size:clamp(9px,2vw,12px);font-weight:700;color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;}
 
-/* CARDS & ACCORDIONS */
-.card {
-  background: var(--bg2); border: 0.5px solid var(--border);
-  border-radius: 16px; padding: 14px; 
-  transition: background 0.3s;
-  display: flex; flex-direction: column;
-}
-.interactive-card { cursor: pointer; }
-.interactive-card:active { background: var(--border); }
+/* CARD */
+.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:14px;padding:12px 14px;}
+.section-label{font-size:9px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--text3);margin-bottom:9px;}
 
-.section-label {
-  font-size: 10px; font-weight: 800; letter-spacing: 2.5px;
-  text-transform: uppercase; color: var(--text3); margin-bottom: 8px;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.chevron { font-size: 12px; transition: transform 0.3s ease; }
+/* WEATHER */
+.weather-now{display:flex;align-items:center;gap:10px;}
+.w-ico{font-size:clamp(28px,7vw,42px);line-height:1;flex-shrink:0;}
+.w-main{flex:1;min-width:0;}
+.w-temp{font-size:clamp(24px,7vw,38px);font-weight:900;color:var(--text);line-height:1;}
+.w-city{font-size:clamp(10px,2vw,13px);font-weight:800;color:var(--text2);margin-top:2px;}
+.w-desc{font-size:clamp(9px,1.8vw,11px);font-weight:700;color:var(--text3);}
+.w-meta{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;}
+.w-meta span{font-size:clamp(9px,1.8vw,11px);font-weight:700;color:var(--text3);}
+.w-meta span strong{color:var(--text2);}
 
-/* ACCORDION ANIMATION (Grid 0fr trick) */
-.accordion-wrapper {
-  display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.3s ease-in-out;
-}
-.accordion-inner { overflow: hidden; }
-.card.open .accordion-wrapper { grid-template-rows: 1fr; }
-.card.open .chevron { transform: rotate(180deg); }
+/* HOURLY */
+.hscroll{overflow-x:auto;display:flex;gap:6px;padding-bottom:4px;scrollbar-width:none;}
+.hscroll::-webkit-scrollbar{display:none;}
+.hi{flex-shrink:0;background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:7px 8px;text-align:center;min-width:48px;}
+.hi.now{background:var(--accent-bg);border-color:var(--accent-border);}
+.hi-t{font-size:9px;font-weight:700;color:var(--text3);margin-bottom:3px;}
+.hi-i{font-size:16px;line-height:1;margin-bottom:3px;}
+.hi-temp{font-size:11px;font-weight:800;color:var(--text2);}
+.hi-r{font-size:9px;color:#4a7090;margin-top:1px;min-height:11px;}
 
-/* WEATHER NOW (Header) */
-.weather-now { display: flex; align-items: center; gap: 12px; }
-.weather-icon { font-size: clamp(36px, 8vh, 50px); line-height: 1; flex-shrink: 0; }
-.weather-main { flex: 1; min-width: 0; }
-.weather-temp { font-size: clamp(28px, 6vh, 42px); font-weight: 900; color: var(--text); line-height: 1; }
-.weather-city { font-size: 13px; font-weight: 800; color: var(--text2); margin-top: 2px; }
-.weather-desc { font-size: 12px; font-weight: 700; color: var(--text3); margin-top: 1px; }
-
-/* 4-HOUR SUMMARY (Always visible) */
-.weather-4h { display: flex; gap: 8px; margin-top: 16px; margin-bottom: 4px; }
-.weather-4h .hourly-item { flex: 1; min-width: 0; padding: 12px 4px; border-radius: 14px; }
-.weather-4h .hourly-time { font-size: 13px; margin-bottom: 6px; }
-.weather-4h .hourly-ico { font-size: 28px; margin-bottom: 6px; }
-.weather-4h .hourly-temp { font-size: 18px; font-weight: 900; color: var(--text); }
-.weather-4h .hourly-rain { font-size: 11px; margin-top: 4px; }
-
-/* HOURLY & DETAILS */
-.hourly-item {
-  background: var(--bg2); border: 0.5px solid var(--border);
-  border-radius: 12px; padding: 8px 4px; text-align: center; 
-}
-.hourly-item.now { background: var(--accent-bg); border-color: var(--accent-border); }
-.hourly-time { font-size: 10px; font-weight: 700; color: var(--text3); margin-bottom: 2px; }
-.hourly-ico { font-size: 18px; line-height: 1; margin-bottom: 2px; }
-.hourly-temp { font-size: 12px; font-weight: 800; color: var(--text2); }
-.hourly-rain { font-size: 9px; font-weight: 700; color: #4a7090; margin-top: 1px; min-height: 12px; }
-
-/* EXTENDED DETAILS (Hidden by default) */
-.weather-meta { display: flex; gap: 10px; margin: 12px 0; flex-wrap: wrap; }
-.weather-meta span { font-size: 11px; font-weight: 700; color: var(--text3); background: var(--bg); padding: 4px 8px; border-radius: 6px;}
-.weather-meta span strong { color: var(--text2); font-weight: 800; }
-
-.hourly-scroll {
-  overflow-x: auto; display: flex; gap: 6px; padding-bottom: 8px; 
-  scrollbar-width: none; scroll-snap-type: x mandatory;
-}
-.hourly-scroll::-webkit-scrollbar { display: none; }
-.hourly-scroll .hourly-item { min-width: 52px; scroll-snap-align: start; flex-shrink: 0; }
-
-.forecast-list { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
-.forecast-item { display: flex; align-items: center; gap: 8px; background: var(--bg2); padding: 6px 10px; border-radius: 10px;}
-.forecast-day { font-size: 12px; font-weight: 800; color: var(--text2); width: 60px; flex-shrink: 0; }
-.forecast-ico { font-size: 16px; flex-shrink: 0; width: 22px; text-align: center; }
-.forecast-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; position: relative; overflow: hidden; min-width: 0; }
-.forecast-bar-fill { position: absolute; top: 0; height: 100%; background: var(--accent); border-radius: 2px; }
-.forecast-temps { display: flex; gap: 6px; font-size: 11px; flex-shrink: 0; }
-.forecast-max { color: var(--text); font-weight: 900; }
-.forecast-min { color: var(--text3); font-weight: 700; }
-
-.divider { height: 1px; background: var(--border); margin: 12px 0; }
+/* FORECAST */
+.flist{display:flex;flex-direction:column;gap:6px;}
+.fi{display:flex;align-items:center;gap:6px;}
+.fi-day{font-size:clamp(10px,2vw,13px);font-weight:800;color:var(--text2);width:48px;flex-shrink:0;}
+.fi-ico{font-size:16px;flex-shrink:0;width:20px;text-align:center;}
+.fi-bar{flex:1;height:4px;background:var(--border);border-radius:2px;position:relative;overflow:hidden;min-width:0;}
+.fi-fill{position:absolute;top:0;height:100%;background:var(--accent);border-radius:2px;}
+.fi-temps{display:flex;gap:4px;font-size:clamp(9px,1.8vw,12px);flex-shrink:0;}
+.fi-max{color:var(--text);font-weight:900;}
+.fi-min{color:var(--text3);font-weight:700;}
 
 /* NAMAZ */
-.namaz-section { display: flex; flex-direction: column; }
-.nv-widget-wrapper {
-  background: var(--bg2); border: 0.5px solid var(--border);
-  border-radius: 14px; overflow: hidden; width: 100%; flex: 1;
-}
-.nv-widget-wrapper > div, .nv-widget-wrapper iframe, .nv-widget-wrapper .nv-widget { width: 100% !important; max-width: 100% !important; }
+.nv-wrap{background:var(--bg2);border:0.5px solid var(--border);border-radius:14px;overflow:hidden;width:100%;}
+.nv-wrap>div,.nv-wrap iframe,.nv-wrap .nv-widget{width:100%!important;max-width:100%!important;}
 
 /* NOTES */
-.notes-area {
-  width: 100%; background: transparent; border: none; outline: none;
-  color: var(--text); font-family: 'Nunito', sans-serif;
-  font-size: 13px; font-weight: 700; line-height: 1.6;
-  resize: none; min-height: 80px; caret-color: var(--text2);
-  margin-top: 4px;
-}
-.notes-area::placeholder { color: var(--text3); }
-.notes-saved {
-  font-size: 9px; font-weight: 700; color: transparent;
-  text-align: right; margin-top: 2px; letter-spacing: 1px;
-  transition: color 0.3s; min-height: 13px;
-}
-.notes-saved.show { color: var(--text3); }
-.loading { font-size: 12px; font-weight: 700; color: var(--text3); text-align: center; padding: 20px;}
+.notes-area{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;line-height:1.7;resize:none;min-height:70px;caret-color:var(--text2);}
+.notes-area::placeholder{color:var(--text3);}
+.notes-saved{font-size:9px;color:transparent;text-align:right;margin-top:3px;transition:color 0.3s;min-height:12px;}
+.notes-saved.show{color:var(--text3);}
+.loading{font-size:12px;font-weight:700;color:var(--text3);}
 </style>
 </head>
 <body>
-<button class="theme-btn" id="theme-btn" onclick="toggleTheme()">☀️</button>
-<div class="page">
-  
-  <div class="col-left">
-    <!-- CLOCK -->
-    <div class="clock-section">
-      <div class="time" id="clock">00<span class="colon">:</span>00</div>
+
+<div class="setup-overlay hidden" id="setup-overlay">
+  <div class="setup-title">Hoş geldin 👋</div>
+  <div class="setup-sub">Hava durumu için şehrini seç</div>
+  <input class="setup-input" id="city-input" placeholder="Şehir ara…" autocomplete="off">
+  <div class="setup-results" id="city-results"></div>
+  <div style="font-size:12px;color:var(--text3)">veya</div>
+  <button class="setup-btn" id="use-location-btn">📍 Konumumu kullan</button>
+</div>
+
+<div class="topbar">
+  <div class="tb" id="edit-btn" onclick="toggleEdit()">✏️</div>
+  <div class="tb" onclick="showSetup()">📍</div>
+  <div class="tb" id="theme-btn" onclick="toggleTheme()">☀️</div>
+</div>
+
+<div class="page" id="page">
+
+  <div class="ww" id="w-clock" data-w="50">
+    <div class="ebar">
+      <span class="elabel">Saat</span>
+      <div class="eb grn" onclick="clockSize(-1)">A−</div>
+      <div class="eb grn" onclick="clockSize(1)">A+</div>
+      <div class="eb" onclick="wMove('w-clock',-1)">← Öne</div>
+      <div class="eb" onclick="wMove('w-clock',1)">Sona →</div>
+      <div class="eb" onclick="wWidth('w-clock',-1)">◀ Dar</div>
+      <div class="eb" onclick="wWidth('w-clock',1)">Geniş ▶</div>
+      <div class="eb red" onclick="wHide('w-clock')">Gizle</div>
+    </div>
+    <div class="wi clock-inner">
+      <div id="clock">00<span class="colon">:</span>00</div>
       <div class="date-line" id="datestr">—</div>
     </div>
+  </div>
 
-    <!-- COLLAPSIBLE WEATHER CARD -->
-    <div class="card interactive-card" id="weather-card" onclick="toggleCard('weather-card')">
-      <div class="section-label">Hava Durumu <span class="chevron">▼</span></div>
-      
-      <!-- Always visible header -->
-      <div id="weather-now-container"><div class="loading">konum bekleniyor…</div></div>
-      
-      <!-- Always visible next 4 hours -->
-      <div class="weather-4h" id="weather-4h-container"></div>
+  <div class="ww" id="w-weather" data-w="50">
+    <div class="ebar">
+      <span class="elabel">Hava</span>
+      <div class="eb" onclick="wMove('w-weather',-1)">← Öne</div>
+      <div class="eb" onclick="wMove('w-weather',1)">Sona →</div>
+      <div class="eb" onclick="wWidth('w-weather',-1)">◀ Dar</div>
+      <div class="eb" onclick="wWidth('w-weather',1)">Geniş ▶</div>
+      <div class="eb red" onclick="wHide('w-weather')">Gizle</div>
+    </div>
+    <div class="wi card" id="weather-now-card"><div class="loading">şehir seçilmedi…</div></div>
+  </div>
 
-      <!-- Collapsible Detailed Weather -->
-      <div class="accordion-wrapper">
-        <div class="accordion-inner" id="weather-details-container">
-          <!-- Populated by JS -->
-        </div>
+  <div class="ww" id="w-hourly" data-w="100">
+    <div class="ebar">
+      <span class="elabel">Saatlik</span>
+      <div class="eb" onclick="wMove('w-hourly',-1)">← Öne</div>
+      <div class="eb" onclick="wMove('w-hourly',1)">Sona →</div>
+      <div class="eb" onclick="wWidth('w-hourly',-1)">◀ Dar</div>
+      <div class="eb" onclick="wWidth('w-hourly',1)">Geniş ▶</div>
+      <div class="eb red" onclick="wHide('w-hourly')">Gizle</div>
+    </div>
+    <div class="wi card">
+      <div class="section-label">Saatlik Tahmin</div>
+      <div class="hscroll" id="hourly-scroll"></div>
+    </div>
+  </div>
+
+  <div class="ww" id="w-forecast" data-w="50">
+    <div class="ebar">
+      <span class="elabel">5 Günlük</span>
+      <div class="eb" onclick="wMove('w-forecast',-1)">← Öne</div>
+      <div class="eb" onclick="wMove('w-forecast',1)">Sona →</div>
+      <div class="eb" onclick="wWidth('w-forecast',-1)">◀ Dar</div>
+      <div class="eb" onclick="wWidth('w-forecast',1)">Geniş ▶</div>
+      <div class="eb red" onclick="wHide('w-forecast')">Gizle</div>
+    </div>
+    <div class="wi card">
+      <div class="section-label">5 Günlük Tahmin</div>
+      <div class="flist" id="forecast-list"></div>
+    </div>
+  </div>
+
+  <div class="ww" id="w-namaz" data-w="50">
+    <div class="ebar">
+      <span class="elabel">Namaz</span>
+      <div class="eb" onclick="wMove('w-namaz',-1)">← Öne</div>
+      <div class="eb" onclick="wMove('w-namaz',1)">Sona →</div>
+      <div class="eb" onclick="wWidth('w-namaz',-1)">◀ Dar</div>
+      <div class="eb" onclick="wWidth('w-namaz',1)">Geniş ▶</div>
+      <div class="eb red" onclick="wHide('w-namaz')">Gizle</div>
+    </div>
+    <div class="wi">
+      <div class="section-label" style="padding:0 4px 4px;">Namaz Vakitleri</div>
+      <div class="nv-wrap">
+        <div class="nv-widget" data-lang="tr" data-search="all" data-cityId="5041" data-countdown="true" data-prayerTimes="row" data-width="370" style="width:100%;"></div>
       </div>
     </div>
   </div>
 
-  <div class="col-right">
-    <!-- PRAYER TIMES -->
-    <div class="namaz-section flex-1">
-      <div class="section-label" style="padding: 0 4px;">Namaz Vakitleri</div>
-      <div class="nv-widget-wrapper">
-        <div class="nv-widget" data-lang="tr" data-search="disabled" data-cityId="1183" data-countdown="true" data-prayerTimes="row" data-width="370" style="width:100%;"></div>
-      </div>
+  <div class="ww" id="w-notes" data-w="50">
+    <div class="ebar">
+      <span class="elabel">Notlar</span>
+      <div class="eb" onclick="wMove('w-notes',-1)">← Öne</div>
+      <div class="eb" onclick="wMove('w-notes',1)">Sona →</div>
+      <div class="eb" onclick="wWidth('w-notes',-1)">◀ Dar</div>
+      <div class="eb" onclick="wWidth('w-notes',1)">Geniş ▶</div>
+      <div class="eb red" onclick="wHide('w-notes')">Gizle</div>
     </div>
-
-    <!-- COLLAPSIBLE NOTES -->
-    <div class="card interactive-card" id="notes-card" onclick="toggleCard('notes-card', event)">
-      <div class="section-label">Notlar <span class="chevron">▼</span></div>
-      <div class="accordion-wrapper">
-        <div class="accordion-inner">
-          <textarea class="notes-area" id="notes" placeholder="Hatırlatıcı veya not ekle..." rows="3"></textarea>
-          <div class="notes-saved" id="notes-saved">kaydedildi</div>
-        </div>
-      </div>
+    <div class="wi card">
+      <div class="section-label">Notlar</div>
+      <textarea class="notes-area" id="notes" placeholder="bir şeyler yaz…" rows="4"></textarea>
+      <div class="notes-saved" id="notes-saved">kaydedildi</div>
     </div>
   </div>
 
@@ -243,162 +231,357 @@ body {
 
 <script async defer crossorigin="anonymous" src="https://namazvakitleri.com.tr/widget.js"></script>
 <script>
-const DAYS=['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
-const DS=['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
-const MONTHS=['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+// ── CONSTANTS ──────────────────────────────────────────────
+const ALL_IDS = ['w-clock','w-weather','w-hourly','w-forecast','w-namaz','w-notes'];
+const WIDTHS  = ['25','33','50','67','75','100'];
+const CLOCK_SIZES = [24,32,40,52,64,80,100,120]; // px
 
-// CLOCK
-function updateClock(){
-  const n=new Date();
-  const h=String(n.getHours()).padStart(2,'0'), m=String(n.getMinutes()).padStart(2,'0');
-  document.getElementById('clock').innerHTML=h+'<span class="colon">:</span>'+m;
-  document.getElementById('datestr').textContent=DAYS[n.getDay()]+', '+n.getDate()+' '+MONTHS[n.getMonth()]+' '+n.getFullYear();
-}
-updateClock(); setInterval(updateClock,1000);
+// ── STATE ──────────────────────────────────────────────────
+// Single source of truth. Never read layout from DOM.
+let S = {};
 
-// THEME
-function toggleTheme(){
-  const h=document.documentElement, dark=h.getAttribute('data-theme')==='dark';
-  h.setAttribute('data-theme',dark?'light':'dark');
-  document.getElementById('theme-btn').textContent=dark?'🌙':'☀️';
-  localStorage.setItem('dashboard-theme',dark?'light':'dark');
-}
-const st=localStorage.getItem('dashboard-theme');
-if(st){ document.documentElement.setAttribute('data-theme',st); document.getElementById('theme-btn').textContent=st==='dark'?'☀️':'🌙'; }
-
-// ACCORDION TOGGLE
-function toggleCard(id, event) {
-  // Prevent toggling when typing in textarea
-  if(event && event.target.tagName.toLowerCase() === 'textarea') return;
-  document.getElementById(id).classList.toggle('open');
+function defaultS() {
+  const s = {};
+  ALL_IDS.forEach((id, i) => {
+    const el = document.getElementById(id);
+    s[id] = {
+      w:      el.getAttribute('data-w') || '50',
+      order:  i,
+      hidden: false
+    };
+  });
+  s['w-clock'].clockSize = 4; // default index into CLOCK_SIZES (64px)
+  return s;
 }
 
-// Open notes by default if there's text, or if on large screen
-window.onload = () => {
-  if(document.getElementById('notes').value.trim() !== "" || window.innerWidth > 600) {
-    document.getElementById('notes-card').classList.add('open');
+function saveS() {
+  try { localStorage.setItem('db-s', JSON.stringify(S)); } catch(e) {}
+}
+
+function loadS() {
+  try {
+    const raw = localStorage.getItem('db-s');
+    if (!raw) { S = defaultS(); return; }
+    const saved = JSON.parse(raw);
+    S = defaultS();
+    ALL_IDS.forEach(id => {
+      if (!saved[id]) return;
+      // only copy known keys, never trust arbitrary saved data
+      const allowed = ['w','order','hidden','clockSize'];
+      allowed.forEach(k => {
+        if (saved[id][k] !== undefined) S[id][k] = saved[id][k];
+      });
+    });
+  } catch(e) { S = defaultS(); }
+}
+
+// ── APPLY STATE TO DOM ─────────────────────────────────────
+// Called after every state mutation. Rebuilds DOM order + visibility.
+function applyS() {
+  const page = document.getElementById('page');
+
+  // 1. Reorder widgets by .order
+  const sorted = [...ALL_IDS].sort((a,b) => S[a].order - S[b].order);
+  sorted.forEach(id => page.appendChild(document.getElementById(id)));
+
+  // 2. Width + visibility
+  ALL_IDS.forEach(id => {
+    const el = document.getElementById(id);
+    el.setAttribute('data-w', S[id].w);
+    if (S[id].hidden) {
+      if (editActive) {
+        el.style.display = '';
+        el.classList.add('dim');
+      } else {
+        el.style.display = 'none';
+        el.classList.remove('dim');
+      }
+    } else {
+      el.style.display = '';
+      el.classList.remove('dim');
+    }
+  });
+
+  // 3. Clock font size
+  const clockSize = CLOCK_SIZES[S['w-clock'].clockSize ?? 4];
+  document.getElementById('clock').style.fontSize = clockSize + 'px';
+}
+
+// ── EDIT MODE ──────────────────────────────────────────────
+let editActive = false;
+
+function toggleEdit() {
+  editActive = !editActive;
+  document.getElementById('edit-btn').classList.toggle('on', editActive);
+  document.getElementById('page').classList.toggle('editing', editActive);
+  applyS(); // re-apply so hidden widgets show/hide correctly
+  if (!editActive) saveS();
+}
+
+// Tap on dimmed widget (not on a button) = unhide
+document.getElementById('page').addEventListener('click', function(e) {
+  if (!editActive) return;
+  if (e.target.closest('.eb')) return; // button handled separately
+  const ww = e.target.closest('.ww.dim');
+  if (ww) { S[ww.id].hidden = false; applyS(); saveS(); }
+});
+
+// ── ACTIONS ────────────────────────────────────────────────
+function wHide(id) {
+  S[id].hidden = true;
+  applyS(); saveS();
+}
+
+function wMove(id, dir) {
+  // dir: -1 = earlier in list, +1 = later
+  const sorted = [...ALL_IDS].sort((a,b) => S[a].order - S[b].order);
+  const idx = sorted.indexOf(id);
+  const nIdx = idx + dir;
+  if (nIdx < 0 || nIdx >= sorted.length) return;
+  // swap orders of the two widgets
+  const tmp = S[id].order;
+  S[id].order = S[sorted[nIdx]].order;
+  S[sorted[nIdx]].order = tmp;
+  applyS(); saveS();
+}
+
+function wWidth(id, dir) {
+  const cur = WIDTHS.indexOf(String(S[id].w));
+  const nxt = Math.max(0, Math.min(WIDTHS.length - 1, (cur === -1 ? 2 : cur) + dir));
+  S[id].w = WIDTHS[nxt];
+  applyS(); saveS();
+}
+
+function clockSize(dir) {
+  const cur = S['w-clock'].clockSize ?? 4;
+  S['w-clock'].clockSize = Math.max(0, Math.min(CLOCK_SIZES.length - 1, cur + dir));
+  applyS(); saveS();
+}
+
+// ── BOOT ───────────────────────────────────────────────────
+loadS();
+applyS();
+
+// ── CLOCK ──────────────────────────────────────────────────
+const DAYS   = ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'];
+const DS     = ['Paz','Pzt','Sal','Çar','Per','Cum','Cmt'];
+const MONTHS = ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'];
+
+function updateClock() {
+  const n = new Date();
+  document.getElementById('clock').innerHTML =
+    String(n.getHours()).padStart(2,'0') + '<span class="colon">:</span>' + String(n.getMinutes()).padStart(2,'0');
+  document.getElementById('datestr').textContent =
+    DAYS[n.getDay()] + ', ' + n.getDate() + ' ' + MONTHS[n.getMonth()] + ' ' + n.getFullYear();
+  // Re-apply font size after innerHTML update (innerHTML nukes inline style on the colon span, not on #clock itself)
+  document.getElementById('clock').style.fontSize = CLOCK_SIZES[S['w-clock'].clockSize ?? 4] + 'px';
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// ── THEME ──────────────────────────────────────────────────
+function toggleTheme() {
+  const h = document.documentElement;
+  const dark = h.getAttribute('data-theme') === 'dark';
+  h.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.getElementById('theme-btn').textContent = dark ? '🌙' : '☀️';
+  localStorage.setItem('db-theme', dark ? 'light' : 'dark');
+}
+(function(){
+  const t = localStorage.getItem('db-theme');
+  if (t) {
+    document.documentElement.setAttribute('data-theme', t);
+    document.getElementById('theme-btn').textContent = t === 'dark' ? '☀️' : '🌙';
   }
+})();
+
+// ── WEATHER ────────────────────────────────────────────────
+const WI = {
+  0:['☀️','Açık'],1:['🌤️','Az Bulutlu'],2:['⛅','Parçalı Bulutlu'],3:['☁️','Kapalı'],
+  45:['🌫️','Sisli'],48:['🌫️','Donlu Sis'],
+  51:['🌦️','Hafif Çisenti'],53:['🌦️','Çisenti'],55:['🌧️','Yoğun Çisenti'],
+  61:['🌧️','Hafif Yağmur'],63:['🌧️','Yağmurlu'],65:['🌧️','Şiddetli Yağmur'],
+  71:['🌨️','Hafif Kar'],73:['❄️','Karlı'],75:['❄️','Yoğun Kar'],
+  80:['🌦️','Sağanak'],81:['🌧️','Sağanak'],82:['⛈️','Şiddetli Sağanak'],
+  95:['⛈️','Fırtınalı'],96:['⛈️','Dolu'],99:['⛈️','Şiddetli Dolu']
 };
+function wi(c) { return WI[c] || ['🌡️','Bilinmiyor']; }
 
-
-// WEATHER LOGIC
-const WI={0:['☀️','Açık'],1:['🌤️','Az Bulutlu'],2:['⛅','Parçalı Bulutlu'],3:['☁️','Kapalı'],45:['🌫️','Sisli'],48:['🌫️','Donlu Sis'],51:['🌦️','Hafif Çisenti'],53:['🌦️','Çisenti'],55:['🌧️','Yoğun Çisenti'],61:['🌧️','Hafif Yağmur'],63:['🌧️','Yağmurlu'],65:['🌧️','Şiddetli Yağmur'],71:['🌨️','Hafif Kar'],73:['❄️','Karlı'],75:['❄️','Yoğun Kar'],80:['🌦️','Sağanak'],81:['🌧️','Sağanak'],82:['⛈️','Şiddetli Sağanak'],95:['⛈️','Fırtınalı'],96:['⛈️','Dolu'],99:['⛈️','Şiddetli Dolu']};
-function wi(c){return WI[c]||['🌡️','Bilinmiyor'];}
-
-async function getCity(lat,lon){
-  try{
-    const r=await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=tr`);
-    const d=await r.json();
-    return d.address.city||d.address.town||d.address.village||d.address.county||'';
-  }catch{return '';}
-}
-
-async function fetchWeather(lat,lon){
-  const r=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weathercode&hourly=temperature_2m,weathercode,precipitation_probability&daily=weathercode,temperature_2m_max,temperature_2m_min&timezone=auto&forecast_days=6`);
+async function fetchWeather(lat, lon) {
+  const r = await fetch(
+    `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+    `&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weathercode` +
+    `&hourly=temperature_2m,weathercode,precipitation_probability` +
+    `&daily=weathercode,temperature_2m_max,temperature_2m_min` +
+    `&timezone=auto&forecast_days=6`
+  );
+  if (!r.ok) throw new Error('fetch failed');
   return r.json();
 }
 
-function renderWeatherUI(data, city) {
-  const c = data.current; 
+function renderNow(data, city) {
+  const c = data.current;
   const [icon, desc] = wi(c.weathercode);
-  const now = new Date();
-  
-  // 1. HEADER (NOW)
-  document.getElementById('weather-now-container').innerHTML = `
-    <div class="weather-now">
-      <div class="weather-icon">${icon}</div>
-      <div class="weather-main">
-        <div class="weather-temp">${Math.round(c.temperature_2m)}°</div>
-        ${city?`<div class="weather-city">${city}</div>`:''}
-        <div class="weather-desc">${desc}</div>
+  document.getElementById('weather-now-card').innerHTML =
+    `<div class="weather-now">
+      <div class="w-ico">${icon}</div>
+      <div class="w-main">
+        <div class="w-temp">${Math.round(c.temperature_2m)}°</div>
+        ${city ? `<div class="w-city">${city}</div>` : ''}
+        <div class="w-desc">${desc}</div>
+        <div class="w-meta">
+          <span>Nem <strong>${c.relative_humidity_2m}%</strong></span>
+          <span>Rüzgar <strong>${Math.round(c.wind_speed_10m)} km/s</strong></span>
+        </div>
       </div>
     </div>`;
+}
 
-  // 2. HOURLY DATA PARSING
-  const {time:times, temperature_2m:temps, weathercode:codes, precipitation_probability:rains} = data.hourly;
-  let html4h = '';
-  let html24h = '';
-  let count = 0;
-
-  for(let i=0; i<times.length && count<24; i++){
+function renderHourly(data) {
+  const now = new Date();
+  const { time: times, temperature_2m: temps, weathercode: codes, precipitation_probability: rains } = data.hourly;
+  let html = '', count = 0;
+  for (let i = 0; i < times.length && count < 24; i++) {
     const t = new Date(times[i]);
     const isNow = t.getHours() === now.getHours() && t.getDate() === now.getDate();
-    
-    // Skip past hours
-    if(t < now && !isNow) continue;
-    
+    if (t < now && !isNow) continue;
     const [ico] = wi(codes[i]);
-    const label = isNow ? 'Şimdi' : String(t.getHours()).padStart(2,'0')+':00';
-    const itemHtml = `<div class="hourly-item${isNow?' now':''}"><div class="hourly-time">${label}</div><div class="hourly-ico">${ico}</div><div class="hourly-temp">${Math.round(temps[i])}°</div><div class="hourly-rain">${rains[i]>0?'%'+rains[i]:''}</div></div>`;
-    
-    if (count < 4) { html4h += itemHtml; } // First 4 go to summary
-    html24h += itemHtml;                   // All 24 go to scroll
+    html += `<div class="hi${isNow?' now':''}">
+      <div class="hi-t">${isNow ? 'şimdi' : String(t.getHours()).padStart(2,'0')+':00'}</div>
+      <div class="hi-i">${ico}</div>
+      <div class="hi-temp">${Math.round(temps[i])}°</div>
+      <div class="hi-r">${rains[i] > 0 ? '%'+rains[i] : ''}</div>
+    </div>`;
     count++;
   }
+  document.getElementById('hourly-scroll').innerHTML = html;
+}
 
-  document.getElementById('weather-4h-container').innerHTML = html4h;
-
-  // 3. 5-DAY FORECAST PARSING
-  const {time:dTime, weathercode:dCodes, temperature_2m_max:maxT, temperature_2m_min:minT} = data.daily;
-  const absMax=Math.max(...maxT), absMin=Math.min(...minT), range=absMax-absMin||1;
-  let html5d = '';
-  
-  for(let i=1; i<6; i++){
-    const d = new Date(dTime[i]);
-    const [ico] = wi(dCodes[i]);
+function renderForecast(data) {
+  const { time, weathercode, temperature_2m_max: maxT, temperature_2m_min: minT } = data.daily;
+  const aMax = Math.max(...maxT), aMin = Math.min(...minT), range = aMax - aMin || 1;
+  let html = '';
+  for (let i = 1; i < 6; i++) {
+    const d = new Date(time[i]);
+    const [ico] = wi(weathercode[i]);
     const max = Math.round(maxT[i]), min = Math.round(minT[i]);
-    const left = ((minT[i]-absMin)/range*100).toFixed(1);
-    const width = Math.max(((maxT[i]-minT[i])/range*100), 5).toFixed(1);
-    
-    html5d += `<div class="forecast-item"><div class="forecast-day">${i===1?'Yarın':DS[d.getDay()]}</div><div class="forecast-ico">${ico}</div><div class="forecast-bar"><div class="forecast-bar-fill" style="left:${left}%;width:${width}%"></div></div><div class="forecast-temps"><span class="forecast-min">${min}°</span><span class="forecast-max">${max}°</span></div></div>`;
+    const l = ((minT[i]-aMin)/range*100).toFixed(1);
+    const w = Math.max(((maxT[i]-minT[i])/range*100), 5).toFixed(1);
+    html += `<div class="fi">
+      <div class="fi-day">${i===1?'Yarın':DS[d.getDay()]}</div>
+      <div class="fi-ico">${ico}</div>
+      <div class="fi-bar"><div class="fi-fill" style="left:${l}%;width:${w}%"></div></div>
+      <div class="fi-temps"><span class="fi-min">${min}°</span><span class="fi-max">${max}°</span></div>
+    </div>`;
   }
-
-  // 4. BUILD DETAILS CONTAINER
-  document.getElementById('weather-details-container').innerHTML = `
-    <div class="divider"></div>
-    <div class="weather-meta">
-      <span>Nem <strong>${c.relative_humidity_2m}%</strong></span>
-      <span>Rüzgar <strong>${Math.round(c.wind_speed_10m)} km/s</strong></span>
-    </div>
-    <div class="section-label" style="margin-top:12px;">24 Saatlik Tahmin</div>
-    <div class="hourly-scroll">${html24h}</div>
-    <div class="section-label" style="margin-top:12px;">5 Günlük Tahmin</div>
-    <div class="forecast-list">${html5d}</div>
-  `;
+  document.getElementById('forecast-list').innerHTML = html;
 }
 
-function loadWeather(){
-  if(!navigator.geolocation){
-    document.getElementById('weather-now-container').innerHTML='<div class="loading">konum desteklenmiyor</div>';
-    return;
-  }
-  navigator.geolocation.getCurrentPosition(async pos=>{
-    try {
-      const {latitude:lat, longitude:lon} = pos.coords;
-      const [data, city] = await Promise.all([fetchWeather(lat,lon), getCity(lat,lon)]);
-      renderWeatherUI(data, city);
-    } catch {
-      document.getElementById('weather-now-container').innerHTML='<div class="loading">hava durumu alınamadı</div>';
-    }
-  },()=>{
-    document.getElementById('weather-now-container').innerHTML='<div class="loading">konum izni verilmedi</div>';
-  });
-}
-loadWeather(); setInterval(loadWeather, 15*60*1000); // Refresh 15m
+// Weather polling — uses closure over gLat/gLon so city changes update polling too
+let gLat = null, gLon = null, gCity = '';
+let weatherTimer = null;
 
-// NOTES
-const notesEl = document.getElementById('notes');
-const savedEl = document.getElementById('notes-saved');
-notesEl.value = localStorage.getItem('dashboard-notes') || '';
-let saveTimer;
-notesEl.addEventListener('input', () => {
-  clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    localStorage.setItem('dashboard-notes', notesEl.value);
-    savedEl.classList.add('show');
-    setTimeout(() => savedEl.classList.remove('show'), 2000);
-  }, 800);
+async function doWeather() {
+  if (!gLat || !gLon) return;
+  try {
+    const data = await fetchWeather(gLat, gLon);
+    renderNow(data, gCity);
+    renderHourly(data);
+    renderForecast(data);
+  } catch(e) {
+    document.getElementById('weather-now-card').innerHTML = '<div class="loading">hava durumu alınamadı — yeniden denenecek</div>';
+  }
+}
+
+function startWeather(lat, lon, city) {
+  gLat = lat; gLon = lon; gCity = city;
+  if (weatherTimer) clearInterval(weatherTimer);
+  doWeather();
+  weatherTimer = setInterval(doWeather, 15 * 60 * 1000);
+}
+
+// ── CITY SETUP ─────────────────────────────────────────────
+let sTimer;
+document.getElementById('city-input').addEventListener('input', function() {
+  clearTimeout(sTimer);
+  const q = this.value.trim();
+  if (q.length < 2) { document.getElementById('city-results').innerHTML = ''; return; }
+  sTimer = setTimeout(() => searchCity(q), 400);
 });
+
+async function searchCity(q) {
+  try {
+    const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=tr&format=json`);
+    const d = await r.json();
+    const res = document.getElementById('city-results');
+    if (!d.results || !d.results.length) {
+      res.innerHTML = '<div style="font-size:12px;color:var(--text3);padding:8px">Bulunamadı</div>';
+      return;
+    }
+    res.innerHTML = d.results.map(c => {
+      const name = c.name + (c.admin1 ? ', '+c.admin1 : '');
+      const safe = name.replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+      return `<div class="setup-ri" onclick="selectCity(${c.latitude},${c.longitude},'${safe}')">${name} — ${c.country}</div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+function selectCity(lat, lon, city) {
+  localStorage.setItem('db-lat', lat);
+  localStorage.setItem('db-lon', lon);
+  localStorage.setItem('db-city', city);
+  hideSetup();
+  startWeather(lat, lon, city);
+}
+
+function showSetup() {
+  document.getElementById('setup-overlay').classList.remove('hidden');
+  document.getElementById('city-input').value = '';
+  document.getElementById('city-results').innerHTML = '';
+}
+function hideSetup() {
+  document.getElementById('setup-overlay').classList.add('hidden');
+}
+
+document.getElementById('use-location-btn').addEventListener('click', () => {
+  if (!navigator.geolocation) return;
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const lat = pos.coords.latitude, lon = pos.coords.longitude;
+    try {
+      const r = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json&accept-language=tr`);
+      const d = await r.json();
+      const city = d.address.city || d.address.town || d.address.village || '';
+      selectCity(lat, lon, city);
+    } catch(e) { selectCity(lat, lon, ''); }
+  }, () => {
+    document.getElementById('weather-now-card').innerHTML = '<div class="loading">konum izni verilmedi</div>';
+  });
+});
+
+// ── WEATHER INIT ───────────────────────────────────────────
+(function(){
+  const lat  = parseFloat(localStorage.getItem('db-lat'));
+  const lon  = parseFloat(localStorage.getItem('db-lon'));
+  const city = localStorage.getItem('db-city') || '';
+  if (lat && lon) { hideSetup(); startWeather(lat, lon, city); }
+  else { document.getElementById('setup-overlay').classList.remove('hidden'); }
+})();
+
+// ── NOTES ──────────────────────────────────────────────────
+(function(){
+  const el = document.getElementById('notes');
+  const sv = document.getElementById('notes-saved');
+  el.value = localStorage.getItem('db-notes') || '';
+  let t;
+  el.addEventListener('input', () => {
+    clearTimeout(t);
+    t = setTimeout(() => {
+      localStorage.setItem('db-notes', el.value);
+      sv.classList.add('show');
+      setTimeout(() => sv.classList.remove('show'), 2000);
+    }, 800);
+  });
+})();
 </script>
 </body>
 </html>
